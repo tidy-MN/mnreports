@@ -1,0 +1,3 @@
+name: MDH blank report (HTML)
+description: A blank R markdown file for an MDH themed data analysis report
+create_dir: false

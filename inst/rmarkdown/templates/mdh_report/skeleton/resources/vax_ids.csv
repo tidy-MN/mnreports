@@ -1,0 +1,16 @@
+ID,name,group_code
+1,Rotavirus,RV
+2,Plague,PLAG
+3,SARS-COV-2 (COVID-19) vaccine,CV19
+4,BCG,BCG
+5,Meningococcal conjugate,MENC
+6,Influenza,FLU
+7,Meningococcal polysaccharide,MENP
+8,"Zoster vaccine, live",ZOST
+9,Typhus,TPHS
+10,Tetanus,TT
+11,Vaccinia,VAC
+12,Rubella Virus Vaccine,RUB
+13,Hib,HIB
+14,Rabies,RAB
+15,Ig,IG

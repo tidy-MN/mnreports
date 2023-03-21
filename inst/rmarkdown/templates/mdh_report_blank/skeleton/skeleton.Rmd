@@ -1,0 +1,26 @@
+---
+title: "Healthy Report"
+subtitle: "Environmental Health Division"
+date: 'Published `r format(Sys.Date(), "%b %d, %Y")`'
+author: "*Rachel Carson, Senior Biologist;*"
+toc-title: "Table of Contents"
+output:
+  mnreports::html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 1 
+    fig_caption: true
+    highlight: haddock 
+    css: resources/mn_style.css
+    includes:
+      before_body: resources/mdh_banner_white.html #mdh_banner_blue.html
+      after_body: resources/mdh_footer.html
+#knit: pagedown::chrome_print 
+---
+
+
+```{r setup, include=F}
+# Set chunk options for report
+knitr::opts_chunk$set(message=F, warning=F, comment="", eval=T)
+```
+

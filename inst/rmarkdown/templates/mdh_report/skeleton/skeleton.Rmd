@@ -1,0 +1,782 @@
+---
+title: "Healthy Report"
+subtitle: "Environmental Health Division"
+date: 'Published `r format(Sys.Date(), "%b %d, %Y")`'
+author: "*Rachel Carson, Senior Biologist;  Yihui Xie, RStudio Scientist*"
+toc-title: "Table of Contents"
+bibliography: bibliography.bib
+nocite: |
+  @R-base, @R-dplyr
+params:
+  section_num_color:  "#008EAA" #MN Teal; More options: MN Blue "#003865"
+output:
+  mnreports::html_document:
+    number_sections: true
+    toc: true
+    toc_depth: 1 
+    fig_caption: true
+    highlight: haddock
+    css: resources/mn_style.css
+    df_print: paged
+    includes:
+      before_body: resources/mdh_banner_white.html #More options: mdh_banner_blue.html
+      after_body: resources/mdh_footer.html
+#knit: pagedown::chrome_print # Uncomment this to create a PDF of the report
+---
+
+
+```{r install-first, include=F}
+# Install required packages for running the report
+packages <- c('tidyverse','remotes','hrbrthemes','DT','plotly','palmerpenguins')
+install.packages(setdiff(packages, rownames(installed.packages()))) 
+
+if (!require(mncolors)) remotes::install_github("tidy-mn/mncolors")
+if (!require(mpcaej)) remotes::install_github("tidy-mn/mpcaej")
+
+library(tidyverse)
+```
+
+```{r setup, include=F}
+# Set chunk options for entire report
+knitr::opts_chunk$set(eval=T, message=F, warning=F, comment="")
+
+# DT data table options
+dt_options <- list(pageLength = 5, 
+                   scrollX    = T, 
+                   dom        = 'tip',
+                   columnDefs = list(list(className = 'dt-left',
+                                          targets = '_all')))
+```
+
+```{r section-num, echo=F, results='asis'}
+# Section number color 
+## Change color in the yaml at the top under "params:" 
+cat(paste("<style>h1 .header-section-number {background:", 
+          params$section_num_color, "} </style>"))  
+
+```
+
+
+# Summary
+
+This is an R Markdown document. Markdown is a flexible plain text tool that you can export to a variety of formats, including PDFs, Word docs, PowerPoint, and HTML web sites. 
+
+Markdown gives you the freedom to add all your content as plain text, without worrying about all the finer details of styling and spacing. Then when you're ready, R can create a variety of outputs from your content and add all the styling and resources like images and charts to your finished report.
+
+No more copy-pasting new charts into a report every time the data changes. Just click `Knit` and the document will update all the charts for you.
+
+# Markdown basics
+
+Below are the basic building blocks for writing reports in Markdown.
+
+## Headings
+
+Headings or section titles are created by putting the `#` hash symbol in front of text. The number of `#` symbols determines the heading level.
+
+```
+# Heading level 1
+## Heading level 2
+...
+
+```
+
+<br>
+
+Which will show as:
+
+> # Heading level 1 {.unlisted .unnumbered}
+> ## Heading level 2
+
+<br>
+
+
+## Web links
+
+To add a link in your text use:
+
+```
+[A link to the MDH homepage](https://www.health.state.mn.us/)
+```
+
+<br>
+
+Which will show as:
+
+> [A link to the MDH homepage](https://www.health.state.mn.us/)
+
+
+## Images
+
+To insert an image, add an `!` in front of the link, and put the location of the image inside the (....):
+
+```
+![Alt text describing image](link_to_the_image.png)
+```
+
+<br>
+
+This Markdown will show a speedy **turtle**:
+
+```
+![An orange spotted turtle on a paved road.](turtle.jpg)
+```
+
+<br>
+
+![An orange spotted turtle on a paved road.](turtle.jpg)
+
+
+<br>
+
+
+## Size of image
+
+To change the size of an image add `{width = "pct_of_screen%"}` at the end of the line. For example, here is a **smaller** turtle image.
+
+```
+![A small orange spotted turtle.](turtle.jpg){width="25%"}
+```
+
+<br>
+
+
+![A small orange spotted turtle.](turtle.jpg){width="25%"} 
+
+
+## Lists
+
+You can add a bulleted list with dashes:
+
+```{verbatim, lang="markdown"} 
+- US CDC
+- US EPA
+- US Census Bureau
+```
+
+<br>
+
+> - US CDC
+> - US EPA
+> - US Census Bureau
+
+
+## Numbered lists {-}
+
+Create numbered lists by adding `1. ` in front of each item. R will take care of updating the 1 to the correct number for each item.
+
+```{verbatim, lang="markdown"} 
+1. July 12, 2020
+1. July 18, 2020
+1. July 23, 2020
+```
+<br>
+
+> 1. July 12, 2020
+> 1. July 18, 2020
+> 1. July 23, 2020
+
+
+## Call-out boxes
+
+To add call-out boxes for special notes and quotes add the right carrot (`> `) in front of the text. These boxes are also called block quotes.
+
+
+Markdown:
+
+```{verbatim, lang="markdown"} 
+> ### Project details  
+>
+> Who:  
+> What:  
+> Where:  
+```
+
+<br>
+
+> ### Project details   
+>
+> Who:  
+> What:  
+> Where: 
+
+
+# R code
+
+To add R scripts to your report, put the code inside a triple backtick sandwich. This is called an an **R chunk**.
+
+> On the keyboard, the `` ` `` (backtick) symbol is on the key up on the far left corner along with the `~` (squiggle line).
+
+<br>
+
+### An R chunk in Markdown
+
+````{verbatim, lang="markdown"}
+
+```{r}
+# R Code Here
+library(tidyverse)
+
+my_data <- read_csv("test_results.csv")
+```
+
+````
+
+<br>
+
+### Will show in report as
+
+```{r, eval=FALSE}
+# R Code Here
+library(tidyverse)
+
+my_data <- read_csv("test_results.csv")
+```
+
+
+# Chunk options
+
+You can customize the way R code is shown in your report by setting options inside the top `{r}` section of the R chunk.
+
+<br>
+
+### Chunk options
+
+| Chunk option | Description                            | 
+|:-------------|:---------------------------------------| 
+| `echo = FALSE` | Hides the code, but the code is run and the results and charts are shown. | 
+| `include = FALSE` | Hides the code and the results, but the code still runs.  |  
+| `eval = FALSE` | Shows the code, but does not evaluate/run it. |  
+| `message = FALSE` | Hides any messages produced by the code.  |
+| `warning = FALSE` | Hides any warnings.  |
+| `fig.alt = "Image alt text"` | The alternative image text read by screen readers.   |
+| `out.width = "50%"` | Sets the output size for charts made by that chunk. 50% will extend half-way across the screen. |
+
+<br>
+
+### R chunk example 
+
+Here's an R chunk that will show its code in the report (`echo = TRUE`), but the code will not be run (`eval = FALSE`).
+
+
+```{verbatim, lang='markdown', eval=F}
+```{r chunk-name, echo = TRUE, eval = FALSE}
+# You will need to install these packages
+install.packages("tidyverse")
+install.packages("DT")
+```
+````
+
+
+# Document options
+
+Settings that apply to your entire document are set in the top YAML section, the bit that starts and ends in `---`.
+
+This is where you can set things like your document's title, author, and more, like whether to add a table of contents.
+
+### Document options
+
+| YAML option  | Description                            | 
+|:-------------|:---------------------------------------| 
+|`title:  `    | Document title    |  
+|`subtitle:  ` | Document subtitle | 
+|`author:  `   | Document author - appears under subtitle | 
+|<code>date: &#96;r format(Sys.Date(), "%b %Y")&#96;</code> | Document date - appears under author |   
+|`toc-title: "Table of Contents"`    | Title for the table of contents |   
+|`bibliography: bibliography.bib`    | File with your references |  
+|`output: html_document` | Type of document to create from your Markdown | 
+
+<br>
+
+### Output types
+
+The following common document types are available (a complete list is [here](https://rmarkdown.rstudio.com/lesson-9.html)):
+
+- [html_document](https://bookdown.org/yihui/rmarkdown/html-document.html)
+- [pdf_document](https://bookdown.org/yihui/rmarkdown/pdf-document.html)
+- [word_document](https://bookdown.org/yihui/rmarkdown/word-document.html)
+- [powerpoint_presentation](https://bookdown.org/yihui/rmarkdown/powerpoint-presentation.html)
+- [xaringan::moon_reader](https://bookdown.org/yihui/rmarkdown/xaringan.html) - Creates slide presentations to run in the browser
+- [github_document](https://rmarkdown.rstudio.com/github_document_format.html) - Simple Markdown documents for posting to GitLab or GitHub
+- [flexdashboard::flex_dashboard](https://rmarkdown.rstudio.com/flexdashboard/) - Interactive dashboards to be viewed in the browser
+
+<br>
+
+These options are available to set under the `output: ` document option.
+
+| YAML output options | Description                    | 
+|:------------|:---------------------------------------| 
+|`toc: true`     | Add a table of contents? `true` or `false` |
+|`toc_depth: 1`  | How many headings deep to show in table of contents? |
+|` number_sections: true` | Add numbers in front of your headings (e.g. **2. Second section **)? `true` or `false`  |
+|` self-contained: true` | Include all an html document's files/resources internally? `true` or `false` |
+| `fig_caption: FALSE` | Stops the Alt text for images being shown as a caption below the image.  |
+   
+   
+
+# Databases
+
+You can use the [`mdhdb`](https://gitlab.health.state.mn.us/r-time/mdhdb) package to simplify your database connections in your reports.
+
+The [`keyring` ](https://r-lib.github.io/keyring/index.html) package is used to keep passwords safe and prevent them being shared in R scripts.
+<br>
+
+> For this project, vaccine data were collected from the MDH MIIC database.
+
+```{r mdhdb, eval=F, message=F}
+library(tidyverse)
+library(mdhdb) # Install from MDH's gitlab
+
+# Connect to MIIC
+miic <- open_athena(db = "miic", user = "me")
+
+## MIIC vaccine IDs
+vax_ids <- tbl(miic, "vaccine_group") %>%
+           select(name, group_code) %>%
+           collect()
+
+glimpse(vax_ids)
+```
+
+
+```{r, echo=F}
+library(tidyverse)
+
+vax_ids <- read_csv("resources/vax_ids.csv") %>%
+           filter(ID != 7)
+
+names(vax_ids) <- toupper(names(vax_ids))
+
+glimpse(vax_ids)
+```
+
+<br>
+
+
+# Tables
+
+## Searchable tables
+
+We use the **DT** package to create scrollable, searchable, and interactive web tables. 
+
+```{r full-table, eval=T, out.width="100%"} 
+library(DT)
+
+# A scrollable and sortable table
+datatable(vax_ids %>% arrange(NAME), 
+          caption = "TABLE 2. Vaccine IDs",
+          rownames = F,
+          filter = 'top',
+          options = dt_options)
+```
+
+
+## MN blue header 
+
+Add `class = 'blue'` to the datatable function to make the table header <span style="background-color:#003865;color: white;">&nbsp;&nbsp;MN blue&nbsp;&nbsp;</span>. Alternatively, to use a <span style="background-color:#53565A;color: white;"> &nbsp; gray &nbsp;</span>&nbsp;header add `class = 'gray'`.
+
+```{r full-table-blue, eval=T, out.width="100%"} 
+# A blue table
+datatable(vax_ids %>% arrange(ID), 
+          caption = "TABLE 1. Vaccine IDs",
+          rownames = F,
+          filter = 'top',
+          options = dt_options,
+          class = 'blue')
+```
+
+<br>
+
+## Simple static tables
+
+You can use `kable()` to add a simple table of your data. 
+
+The table below shows the first few results of the data *mtcars*. You can add a caption to your table by adding `caption="My caption"` to the `kable` function.
+
+```{r, echo=T}
+library(knitr)
+
+kable(head(mtcars), 
+      caption = '**TABLE 1.** Sample of car data')
+```
+
+<br>
+
+## Markdown table
+
+You can also create a table in markdown using the "vertical pipe" or `|`.
+
+<br>
+
+**This markdown:**
+
+``` 
+### Data dictionary 
+
+| Column | Description                            | Example value |
+|:-------|:---------------------------------------|:--------------|
+|`geoid` |  Unique ID assigned to each Pokemon    |  "24-3026"    |    
+|`lat  ` |  Pokemon's center latitude coordinate  |  -94.021      |   
+|`lon  ` |  Pokemon's center longitude coordinate |  44.521       | 
+
+```
+
+<br>
+
+**Creates:**
+
+### Data dictionary
+
+| Column | Description                            | Example value |
+|:-------|:---------------------------------------|:--------------|
+|`geoid` |  Unique ID assigned to each Pokemon    |  "24-3026"    |    
+|`lat  ` |  Pokemon's center latitude coordinate  |  -94.021      |   
+|`lon  ` |  Pokemon's center longitude coordinate |  44.521       | 
+
+
+# Charts
+
+Charts will appear automatically when you create a plot in the code of your R chunk. You can add a caption to the chart with the chunk option `fig.cap="My caption"`.
+
+<br>
+
+Here's an example using a fuel efficiency chart: 
+
+`{r fig.cap = "**FIG 1.** MPG vs Horsepower"}')`
+
+
+```{r fig-caption, fig.cap="**FIG 1.** MPG vs Horsepower"}
+library(ggplot2)
+library(mncolors) #remotes::install_github("tidy-mn/mncolors")
+
+mtcars <- mtcars
+
+mtcars$Transmission <- factor(mtcars$am, 
+                              labels = c('automatic', 
+                                         'manual'))
+
+ggplot(mtcars, aes(hp, mpg, color = Transmission)) +
+  geom_point() + 
+  geom_smooth() +
+  scale_color_mn(palette = "accent", reverse = T) +
+  facet_wrap(~Transmission) +
+  theme(legend.position = 'top')
+```
+
+
+
+## Fullwidth charts {-}
+
+To set the size of charts, use the chunk option `out.width=` and set it to a number between **1%** (the smallest) and **100%** (the largest).
+
+<br>
+
+Here's the same chart as above, but set to **out.width="100%"**.
+
+`{r out.width="100%", fig.cap="**FIG 2. (fullwidth)** MPG vs Horsepower"}`
+
+
+```{r fig-fullw, fig.cap="**Fig 2. (fullwidth)** MPG vs Horsepower", out.width="100%", echo=FALSE}
+<<fig-caption>>
+```
+
+
+# MN Colors 
+
+The `mncolors` package makes it easy to use the MN State brand colors in your plots. Explore the R package at https://github.com/tidy-MN/mncolors for more details and to view all available color palettes.
+
+
+```{r fake-drug-data-setup, include=F}
+drug_prices <- palmerpenguins::penguins %>%
+               drop_na(flipper_length_mm)
+               
+drug_prices <- drug_prices %>%
+               mutate(date = as.Date(paste0("20", substr(flipper_length_mm,1,2), "-", round(as.numeric(substr(flipper_length_mm,3,3))*12/10+0.6+runif(nrow(drug_prices))), "-01")))
+```
+
+```{r set-colors, out.width="100%"}
+library(mncolors)  #remotes::install_github("tidy-mn/mncolors")
+library(tidyverse)
+library(hrbrthemes)
+
+ggplot(drug_prices, aes(x = date, y = bill_length_mm)) +
+  geom_point(aes(color = species, shape = species),
+             size = 4, alpha = 0.55) +
+  geom_smooth(method = "lm", se = F, aes(color = species)) +
+  scale_color_manual(values = mncolors(7, "primary_accent")[1:3],
+                     labels = c("Group1", "Group2", "Group3")) +
+  scale_shape_discrete(labels = c("Group1", "Group2", "Group3")) +
+  labs(title = "Rising Drug Prices",
+       subtitle = "Prices are increasing in three categories",
+       x = "Year",
+       y = "Price",
+       color = "",
+       shape = "",
+       caption = "Source: Data downloaded from CDC Data Mart 2030") +
+  scale_y_comma(labels = scales::dollar_format(), limits = c(30,60)) +
+  theme_ipsum_rc(base_size = 14) +
+  theme(legend.position = c(0.85, 0.22),
+        plot.title = element_text(color = mncolors(5, "blue")[5],
+                                  size = 18,
+                                  family = "Arial Narrow"),
+        plot.subtitle = element_text(size = 16),
+        plot.caption = element_text(hjust = 0, face = "italic"),
+        plot.caption.position = "plot")              
+```
+
+
+# Interactive charts
+
+The `plotly` packages provides web charts that viewers can interact with. Any ggplot can be turned into a plotly plot by sending it to the `ggplotly()` function.
+
+```{r plotly}
+library(plotly)
+
+(ggplot(mtcars) + 
+  geom_point(aes(x = disp, y = mpg), color = "steelblue", size = 5)) %>% 
+  ggplotly()
+```
+
+# Tabs
+
+You can split your content into a tabbed menu by adding `{.tabset}` after the top heading you want the tabs to appear under. Then, every sub-heading under it will appear in a tabbed menu.
+
+<br>
+
+For example, the following will let users select tabs to see different years of data. The top *Pick a year* heading is a level 2 (`## `) heading, so all of the level 3 (`### `) headings under it will be shown as tabs.
+
+```md
+## Pick a year {.tabset}
+
+Select a year to view results.
+
+### 2000 {-}
+
+**2000** 
+This is **2000** data.
+
+### 2010 {-}
+
+**2010**
+This is **2010** data.
+
+### 2020 {-}
+
+**2020**
+This is **2020** data.
+
+```
+
+<br>
+
+## Pick a year {.tabset}
+
+Select a year to view results.
+
+
+### 2000 {-}
+
+**2000** 
+
+This is 2000 data.
+
+### 2010 {-}
+
+**2010**
+
+This is 2010 data.
+
+### 2020 {-}
+
+**2020**
+
+This is 2020 data.
+
+## 
+
+<br>
+
+
+# Equations
+
+Surround a chunk of text with `$$` to add formatted functions and math equations.  
+For example, this is the equation we used to predict the migration patterns of the Pokemon.
+
+```
+### Pythagorean theorem
+$$
+a^2 + b^2 = c^2
+$$
+```
+<br>
+
+> ### Pythagorean theorem
+> $$
+> a^2 + b^2 = c^2
+> $$
+
+
+# Maps
+
+Leaflet maps are an easy way to add interactive maps to your report. Here's an example displaying the polygon shapefile of tribal nations across MN.
+
+
+```{r full-map, fig.width=9, fig.height=5.5}
+library(mpcaej) #remotes::install_github("tidy-mn/mpcaej")
+library(tidyverse)
+library(leaflet)
+library(sf)
+
+# Get map data ----
+tribal_areas <- tribe_shapes
+
+# Transform to lat/long coords
+tribal_areas <- st_transform(tribal_areas, 4326)
+
+# Map the polygons -----
+leaflet(tribal_areas) %>%
+  addProviderTiles(providers$Stamen.TonerLines,
+                   options = providerTileOptions) %>%
+  addProviderTiles(providers$CartoDB.Voyager,
+                   options = providerTileOptions(opacity = 0.8)) %>%
+  addPolygons(color        = "purple",
+              weight       = 1,
+              smoothFactor = 1.4,
+              opacity      = 0.9,
+              fillOpacity  = 0.2) 
+```
+
+<br>
+  
+Find more shapefiles and spatial data online in the [MN GEOCOMMONS](https://gisdata.mn.gov/).
+
+## Map markers
+
+This is a map of the sites around St. Paul.
+```{r, fig.width=9, fig.height=4}
+sites <- read_csv(
+'AqsID,Site Name,Lat,Long 
+270531905,Minneapolis-Harrison,44.981,-93.301
+270531906,Minneapolis-Lyndale,44.946,-93.277
+271377549,Duluth-Michigan St,46.771,-92.117
+271231903,St. Paul-Westside,44.927,-93.067
+271230871,St. Paul-Harding H.S.,44.959,-93.036
+271230868,St. Paul-Downtown,44.951,-93.099
+271230050,St. Paul-University Ave,44.956,-93.146
+271231907,St. Paul Payne-Phalen,44.972,-93.083')
+
+# Filter to only St. Paul sites
+sites <- filter(sites, str_detect(`Site Name`, "Paul"))
+
+# Add Markers and popup info
+leaflet(sites) %>%
+  addProviderTiles(providers$CartoDB) %>%
+  addMarkers(popup = ~`Site Name`)
+```
+
+<br>
+
+**Circle markers**  
+The circles show the `count` of Pokemon at each site. 
+```{r, fig.width=9, fig.height=3}
+# Create example count column for map
+sites$count <- c(4, 12, 44, 88, 100)
+
+# Set the color palette
+pal <- colorBin(mncolors(10, "corn"), sites$count, 4, pretty = FALSE)
+  
+# Map w/ circles colored by data column
+leaflet(sites) %>%
+  addProviderTiles(providers$CartoDB) %>%
+  addCircleMarkers(label = ~`Site Name`,
+                   color = ~pal(count),
+                   opacity = 0.8) %>%
+  addLegend(pal = pal, 
+            values = ~count,
+            title = "Pokemon Count",
+            #labFormat = labelFormat(prefix = "$"),
+            opacity = 0.9)
+```
+
+<br>
+
+
+**Highlight a single site**  
+
+The site highlighted below had the most Pokemon sightings.
+```{r, fig.width=9, fig.height=3}
+# Use dark theme with pink highlighted site
+leaflet(sites) %>%
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addCircleMarkers(label = ~`Site Name`, color = "white") %>%
+  addCircleMarkers(data   = sites[5, ],
+                   color  = "hotpink",
+                   radius = 15,
+                   label  = ~`Site Name`,
+                   labelOptions = labelOptions(noHide   = TRUE, 
+                                               textsize = "13px", 
+                                               direction = "left"))
+```
+
+
+# Collapsible content
+
+To hide a long list or table you can use `<details> and <summary>` to create hidden drop-down content. Adding the following creates a drop-down window in your document that starts collapsed, but expands when the reader selects it.
+
+
+```
+<details>
+<summary> **Click to see the secret list** </summary>
+
+This is a hidden list inside a collapsible menu.
+
+- fish
+- bird
+- toad
+- stone
+ 
+</details>
+```
+
+<br>
+
+<details>
+<summary> **Click to see the secret list** </summary>
+ 
+This is a hidden list inside a collapsible menu.
+
+- fish
+- bird
+- toad
+- stone
+
+</details>
+
+
+# Footnotes
+
+You can add footnotes with the `^[Footnote]` syntax.
+
+
+This Markdown adds two footnotes to R markdown references. The footnote's text inside the brackets appears at the bottom of the page.
+
+```
+Learn more at **RStudio's Get Started Guide**^[RStudio's Get Started Guide-https://rmarkdown.rstudio.com/index.html] and from the online book **R Markdown: The Definitive Guide**^[R Markdown: The Definitive Guide-https://bookdown.org/yihui/rmarkdown/].
+```
+
+<br>
+
+> Learn more at **RStudio's Get Started Guide**^[RStudio's Get Started Guide-https://rmarkdown.rstudio.com/index.html] and from the online book **R Markdown: The Definitive Guide**^[R Markdown: The Definitive Guide-https://bookdown.org/yihui/rmarkdown/].
+
+
+# References
+
+<div id="refs"></div>
+
+<br>
+
+```{r bib, include=F}
+# You can keep this here to create a bibliography file that references all of the R packages used in the report above.
+knitr::write_bib(sub("^package:", "", 
+                     grep("package", search(), value = TRUE)),
+                 file = 'bibliography.bib')
+```

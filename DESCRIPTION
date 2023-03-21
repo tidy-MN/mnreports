@@ -1,0 +1,46 @@
+Package: mnreports
+Type: Package
+Title: State of Minnesota branded Markdown templates
+Version: 0.1.0
+Authors@R:  c(
+    person("Eric", "Kvale", , "eric.kvale@state.mn.us", role = c("aut")),
+    person("Dorian", "Kvale",  , "dorian.l.kvale@state.mn.us", role = c("aut","cre")),
+    person("Chris Brueske", role = c("pro")),
+    person("Steve Gorg", role = c("pro"))
+    )
+Maintainer: Dorian Kvale <dorian.l.kvale@state.mn.us>
+Description: Includes MDH and MPCA state agency report themes with branded headers, chart themes, and tables. 
+    Produce reports in a variety of formats including HTML, MS Word, PDF, and Presentations. 
+    Use `mnreports::html_document` as the output format to create a smaller html file than the default `html_document`.
+License: MIT License
+Depends:
+    R (>= 3.0)
+Imports:
+    evaluate (>= 0.13),
+    fontawesome (>= 0.5.0),
+    htmltools (>= 0.5.1),
+    jquerylib,
+    jsonlite,
+    knitr (>= 1.22),
+    methods,
+    stringr (>= 1.2.0),
+    tinytex (>= 0.31),
+    tools,
+    utils,
+    xfun (>= 0.36),
+    yaml (>= 2.1.19)
+Suggests:
+    digest,
+    dygraphs,
+    fs,
+    rsconnect,
+    downlit (>= 0.4.0),
+    katex (>= 1.4.0),
+    sass (>= 0.4.0),
+    shiny (>= 1.6.0),
+    testthat (>= 3.0.3),
+    tibble,
+    vctrs,
+    withr (>= 2.4.2)
+Encoding: UTF-8
+RoxygenNote: 7.2.3

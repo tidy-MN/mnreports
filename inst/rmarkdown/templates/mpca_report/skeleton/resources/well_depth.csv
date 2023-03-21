@@ -1,0 +1,5 @@
+SYS_LOC_CODE,INSTALLATION_DATE,DRILLING_METHOD,WELL_PURPOSE,DEPTH_OF_WELL
+689971       ,2010-07-23        ,Bucket Auger          ,Well-Observation ,          23.5
+242292       ,1984-07-10        ,Auger (non-specified) ,Well             ,          17.0
+244490       ,1986-07-23        ,NA                    ,Well-Observation ,          65.0
+104319       ,1975-10-27        ,Non-specified Rotary  ,Well-Domestic    ,         170.0
